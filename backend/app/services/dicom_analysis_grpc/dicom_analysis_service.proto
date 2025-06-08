@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package dicom;
+
+message AnalysisRequest {
+  int32 i_dicom = 1;
+  bytes zip_data = 2; // The DICOM file as raw bytes
+}
+
+message AnalysisResponse {
+  int32 i_dicom = 1;
+  bytes np_data = 2; // The TensorFlow file as raw bytes
+}
+
+service DICOM_Analyser {
+  rpc Analyze (AnalysisRequest) returns (AnalysisResponse);
+}

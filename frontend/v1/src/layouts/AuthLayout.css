@@ -1,0 +1,74 @@
+.main-content-item-files {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 1rem;
+}
+
+.operation-type-menu,
+.patient-files-menu,
+.bone-models-menu {
+  background-color: #2a2a2e;
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.operation-type-menu ul,
+.patient-files-menu ul,
+.bone-models-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.operation-type-menu li,
+.patient-files-menu li,
+.bone-models-menu li {
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #444;
+}
+
+.operation-type-menu li:hover,
+.patient-files-menu li:hover,
+.bone-models-menu li:hover {
+  background-color: #444;
+}
+
+.patient-files-menu li.selected {
+  background-color: #555;
+}
+
+.patient-files-menu li.selected:hover {
+  background-color: #666;
+}
+
+.center-button {
+  grid-column: 1 / span 3; 
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.center-button button {
+  padding: 0.6rem;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.center-button button:hover {
+  background-color: #3a3b40; 
+}
+
+.login-error {
+  color: red;
+  margin-top: 0.5rem;
+}

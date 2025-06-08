@@ -1,0 +1,74 @@
+.toolbar-item {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    background-color: #1a1919;
+    padding: 0.75rem 1.5rem;
+    box-sizing: border-box;
+  }
+  
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .logo {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+  }
+  
+  .tab-title {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .account-dropdown {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .account-name {
+    font-weight: 500;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #2a2b2f;
+    border: 1px solid #555;
+    list-style: none;
+    margin-top: 0;
+    padding: 0;
+    width: 180px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .account-dropdown:hover .dropdown-menu {
+    display: block;
+  }
+  
+  .dropdown-menu li {
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .dropdown-menu li:hover {
+    background-color: #3a3b40;
+  }

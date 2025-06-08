@@ -1,0 +1,34 @@
+/* Reusing PNGViewer styles */
+
+.png-viewer-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0e0e0f;
+    overflow: hidden;
+  }
+  
+  .png-viewer-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: #888;
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  .png-viewer-placeholder.error {
+    color: #ff6347;
+  }
+  
+  .png-viewer-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  

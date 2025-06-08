@@ -1,0 +1,12 @@
+#Configs
+config.json
+
+#Env
+app/venv/*
+
+#Cache
+app/__pycache__/*
+
+#Requirements
+requirements.txt
+app/requirements.txt

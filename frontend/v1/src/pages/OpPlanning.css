@@ -1,0 +1,208 @@
+.main-content-item-planing {
+  height: 100%;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 1rem;
+}
+
+.model-view {
+  background-color: #0e0e0f;
+  grid-column: 1 / span 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden; 
+}
+
+.implant-menu {
+  grid-column: 3;
+  padding: 1rem;
+  gap: 10px;
+  background-color: #1c1c1e;
+  border: 1px solid #555;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: stretch;
+}
+
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.field-row label {
+  white-space: nowrap;
+  flex: 1;
+  font-weight: 500;
+  color: #d3d3d3;
+}
+
+.field-row select {
+  flex: 2;
+  padding: 0.4rem;
+  font-size: 1rem;
+  background-color: #2a2a2e;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 5px;
+  min-width: 0;
+}
+
+.full-width select {
+  width: 100%;
+  padding: 0.4rem;
+  font-size: 1rem;
+  background-color: #2a2a2e;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 5px;
+}
+
+.implant-menu button {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.implant-menu button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.implant-menu button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.assigned-prostheses-display {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #444;
+  color: #c0c0c0;
+}
+
+.assigned-prostheses-display h3 {
+  margin-bottom: 10px;
+  color: #c0c0c0;
+}
+
+.assigned-prosthesis-item {
+  background-color: #2a2a2e;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #333;
+}
+
+.assigned-prosthesis-item p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #d3d3d3;
+}
+
+.assigned-prosthesis-item strong {
+  color: #a9a9a9;
+}
+
+.move-controls {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #444;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.move-controls label {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-weight: 500;
+  color: #d3d3d3;
+}
+
+.move-controls select,
+.move-controls input[type="number"] {
+  padding: 0.4rem;
+  font-size: 1rem;
+  background-color: #2a2a2e;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 5px;
+  flex: 1;
+  min-width: 80px;
+}
+
+.move-controls button {
+  width: auto;
+  flex-shrink: 0;
+  margin-top: 0;
+  padding: 0.5rem 1rem;
+}
+
+.save-restore-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #444;
+}
+
+.save-restore-buttons button {
+  flex: 1;
+  margin-top: 0;
+}
+
+.view-controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 10;
+}
+
+.view-controls button {
+  width: auto;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  background-color: #444;
+  color: white;
+  border: 1px solid #666;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.view-controls button:hover:not(:disabled) {
+  background-color: #666;
+  border-color: #888;
+}
+
+.view-controls button.active {
+  background-color: #007bff;
+  border-color: #007bff;
+  font-weight: bold;
+}
+
+.view-controls button:disabled {
+  background-color: #333;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #555;
+}
