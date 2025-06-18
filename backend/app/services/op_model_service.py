@@ -8,7 +8,7 @@ from app.models.prosthesis_model import ProsthesisModel
 from app.models.opplan_model import OperationPlanBone, OperationPlanProsthesis
 from app.models.opplan_scene_model import OperationPlanScenes
 from vtkmodules.vtkCommonTransforms import vtkTransform
-
+from scipy.spatial.transform import Rotation as R
 
 scene_handlers = {}
 
@@ -192,13 +192,11 @@ class ModelHandler:
 
         current_transform = self.prosthesis_actor.GetUserTransform()
         if current_transform is None:
-            current_transform = vtk.vtkTransform()
-
+            current_transform = vtk.vtkTransform() 
 
         new_transform = vtk.vtkTransform()
-        new_transform.DeepCopy(current_transform)
-        new_transform.Scale(scale_x, scale_y, scale_z)
-
+        new_transform.DeepCopy(current_transform) 
+        new_transform.Scale(scale_x, scale_y, scale_z) 
 
         self.prosthesis_actor.SetUserTransform(new_transform)
 
@@ -229,11 +227,9 @@ class ModelHandler:
     def get_actor_matrix(self, actor: vtk.vtkActor) -> list[float]:
         transform = actor.GetUserTransform()
         if transform is None:
-
             return np.identity(4).flatten().tolist()
 
         matrix = transform.GetMatrix()
-
         return [matrix.GetElement(i, j) for i in range(4) for j in range(4)]
 
 
@@ -279,11 +275,30 @@ def create_model_handler(i_operation_plan: int, db: Session):
 
     handler = ModelHandler(bone_model_db.path_to_model)
 
+    scene = db.query(OperationPlanScenes).filter_by(i_operation_plan=i_operation_plan).first()
     op_prosthesis = db.query(OperationPlanProsthesis).filter_by(i_operation_plan=i_operation_plan).first()
+
     if op_prosthesis:
         prosthesis_model_db = db.query(ProsthesisModel).filter_by(i_3d_prosthesis_model=op_prosthesis.i_3d_prosthesis_model).first()
         if prosthesis_model_db:
             handler.add_prosthesis_to_scene(prosthesis_model_db.path_to_model)
+
+    if scene:
+        bone_matrix = compose_matrix(
+            [scene.bone_translation_x, scene.bone_translation_y, scene.bone_translation_z],
+            [scene.bone_rotation_x, scene.bone_rotation_y, scene.bone_rotation_z],
+            [scene.bone_scale_x, scene.bone_scale_y, scene.bone_scale_z]
+        )
+        handler.set_bone_matrix(bone_matrix)
+
+        if (op_prosthesis and prosthesis_model_db and
+            scene.prosthesis_translation_x is not None):
+            prosthesis_matrix = compose_matrix(
+                [scene.prosthesis_translation_x, scene.prosthesis_translation_y, scene.prosthesis_translation_z],
+                [scene.prosthesis_rotation_x, scene.prosthesis_rotation_y, scene.prosthesis_rotation_z],
+                [scene.prosthesis_scale_x, scene.prosthesis_scale_y, scene.prosthesis_scale_z]
+            )
+            handler.set_prosthesis_matrix(prosthesis_matrix)
 
     scene_handlers[i_operation_plan] = handler
     return handler
@@ -298,7 +313,6 @@ def restore_positions(i_operation_plan: int, db: Session):
         handler = create_model_handler(i_operation_plan, db)
     except Exception as e:
         raise ValueError(f"Failed to prepare model handler for operation plan {i_operation_plan}: {str(e)}")
-
 
     scene = db.query(OperationPlanScenes).filter_by(i_operation_plan=i_operation_plan).first()
     if not scene:
@@ -337,9 +351,6 @@ def restore_positions(i_operation_plan: int, db: Session):
 
     return {"status": "positions restored"}
 
-from scipy.spatial.transform import Rotation as R
-import numpy as np
-
 def decompose_matrix(matrix: list[float]):
     m = np.array(matrix).reshape(4, 4)
     translation = m[:3, 3].tolist()
@@ -364,4 +375,5 @@ def compose_matrix(translation, rotation_deg, scale):
     composed[:3, :3] = rotation_scaled
     composed[:3, 3] = translation
     return composed.flatten().tolist()
+
 

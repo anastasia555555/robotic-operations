@@ -34,8 +34,8 @@ class ScaleRequest(BaseModel):
 
 class RotateRequest(BaseModel):
     i_operation_plan: int
-    axis: str
-    angle: float
+    axis: str  # "x", "y", or "z"
+    angle: float  # in degrees, positive or negative
 
 @router.post("/create_handler")
 def create_handler(i_operation_plan: int, db: Session = Depends(get_db), _: dict = Depends(require_roles(1, 2))):
@@ -193,3 +193,4 @@ def restore_positions_api(i_operation_plan: int, db: Session = Depends(get_db), 
         raise HTTPException(status_code=404, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to restore positions: {str(e)}")
+

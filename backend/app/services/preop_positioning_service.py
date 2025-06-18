@@ -140,9 +140,10 @@ class PositioningHandler:
         return selected
 
     def _generate_predictions(self):
-        self.prediction_points = self._sample_surface_points(
-            3, axis=self.sort_axis, descending=self.sort_descending
-        )
+        self.prediction_points = [(10 + i, pt) for i, pt in enumerate(
+            self._sample_surface_points(3, axis=self.sort_axis, descending=self.sort_descending)
+        )]
+
         model_pts = np.array([self.surface_points[i] for i in self.registered_points_keys[:10]])
         world_pts = np.array([self.registered_points[k] for k in self.registered_points_keys[:10]])
 
@@ -159,11 +160,11 @@ class PositioningHandler:
         tfm.Update()
 
         self.predicted_world_coords = [
-            np.array(tfm.TransformPoint(p)) for p in self.prediction_points
+            np.array(tfm.TransformPoint(pt)) for _, pt in self.prediction_points
         ]
 
     def _compute_prediction_errors(self):
-        actual = [self.prediction_registered[idx] for idx in self.prediction_points]
+        actual = [self.prediction_registered[idx] for idx, _ in self.prediction_points]
         self.prediction_errors = [
             float(np.linalg.norm(pred - act))
             for pred, act in zip(self.predicted_world_coords, actual)
@@ -177,19 +178,22 @@ class PositioningHandler:
         world = np.array(world_coords)
         self.registered_points[index] = world
 
-
         if len(self.registered_points) == 10 and not self.prediction_points:
             self._generate_predictions()
 
-
-        if index in self.prediction_points:
+        prediction_point_indices = [idx for idx, _ in self.prediction_points]
+        if index in prediction_point_indices:
             self.prediction_registered[index] = world
-            if len(self.prediction_registered) == len(self.prediction_points):
-                self._compute_prediction_errors()
+
+    def check_and_compute_prediction_errors(self):
+        if (
+            len(self.prediction_registered) == len(self.prediction_points)
+            and self.prediction_points
+        ):
+            self._compute_prediction_errors()
 
     def get_prediction_errors(self) -> list[float]:
         return self.prediction_errors
-
 
     def set_camera(self, view="front"):
         bounds = self.bone_model.GetBounds()
@@ -217,7 +221,6 @@ class PositioningHandler:
         self.renderer.SetActiveCamera(camera)
         self.renderer.ResetCameraClippingRange()
 
-
     def render_png_bytes(self) -> bytes:
         self.render_window.SetSize(1024, 1024)
 
@@ -235,8 +238,8 @@ class PositioningHandler:
                 color = (1.0, 0.0, 0.0)
             self._add_sphere(pt, color, label=idx)
 
-        for i, pt in enumerate(self.prediction_points):
-            self._add_sphere(pt, (0.0, 0.0, 1.0), label=i+10)
+        for idx, pt in self.prediction_points:
+            self._add_sphere(pt, (0.0, 0.0, 1.0), label=idx)
 
         self.render_window.Render()
         win2img = vtk.vtkWindowToImageFilter()
@@ -248,7 +251,6 @@ class PositioningHandler:
         writer.WriteToMemoryOn()
         writer.Write()
         return bytes(memoryview(writer.GetResult()))
-
 
     def _add_sphere(self, pt, color, label=None):
         sphere = vtk.vtkSphereSource()
@@ -287,11 +289,9 @@ class PositioningHandler:
             text_actor.GetProperty().SetDiffuse(0.0)
             text_actor.GetProperty().SetSpecular(0.0)
             text_actor.GetProperty().SetRenderLinesAsTubes(True)
-
             text_actor.GetProperty().SetLineWidth(1.5)
 
             self.renderer.AddActor(text_actor)
-
 
     def get_all_points_status(self) -> list[dict]:
         points_status = []
@@ -304,17 +304,16 @@ class PositioningHandler:
                 "world_coords": self.registered_points.get(idx).tolist() if idx in self.registered_points else None
             })
 
-        for i, pt in enumerate(self.prediction_points):
-            idx = i+10
+        for idx, pt in self.prediction_points:
             points_status.append({
                 "index": idx,
                 "type": "prediction",
                 "model_coords": pt.tolist(),
-                "world_coords": self.prediction_registered.get(pt).tolist() if pt in self.prediction_registered else None
+                "world_coords": self.prediction_registered.get(idx).tolist() if idx in self.prediction_registered else None
             })
 
         return points_status
-    
+
     def get_registered_main_points(self) -> list[tuple[int, np.ndarray, np.ndarray]]:
         result = []
         for idx, model_pt in enumerate(self.surface_points[:10]):

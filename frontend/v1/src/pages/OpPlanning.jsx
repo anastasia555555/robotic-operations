@@ -19,6 +19,7 @@ export default function OpPlanning() {
   const [assignedProsthesesInfo, setAssignedProsthesesInfo] = useState([]);
   const [currentView, setCurrentView] = useState("front");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   const [moveDirection, setMoveDirection] = useState('up');
   const [moveValue, setMoveValue] = useState(0);
 
@@ -278,11 +279,14 @@ export default function OpPlanning() {
       }
   
       console.log(`Successfully moved prosthesis ${moveDirection} by ${moveValue}`);
+  
+      handleRefreshView();
     } catch (error) {
       console.error("Error moving prosthesis:", error);
       alert(`An error occurred while moving prosthesis: ${error.message}`);
     }
   };
+  
   
   const handleSavePositions = async () => {
     if (!operationPlanId) {
@@ -341,12 +345,15 @@ export default function OpPlanning() {
       }
   
       console.log(`Positions restored for operation plan: ${operationPlanId}`);
-      alert('Prosthesis positions restored successfully! Remember to click "Refresh View" to see changes.');
+      alert('Prosthesis positions restored successfully!');
+  
+      handleRefreshView();
     } catch (error) {
       console.error("Error restoring positions:", error);
       alert(`An error occurred while restoring positions: ${error.message}`);
     }
   };
+  
   
   const handleRegisterBone = async () => {
     if (!operationPlanId) {

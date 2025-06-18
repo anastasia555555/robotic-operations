@@ -100,35 +100,49 @@ def register_point(
             data.index,
             [data.world_coords.x, data.world_coords.y, data.world_coords.z]
         )
+        handler.check_and_compute_prediction_errors()
+
         response = {
             "status": "registered",
             "total_registered": len(handler.registered_points)
         }
-        if handler.prediction_points and len(handler.registered_points) == 10:
-            response["prediction_indices"] = handler.prediction_points
-        if hasattr(handler, 'prediction_errors') and handler.prediction_errors is not None:
+
+        if handler.prediction_points:
+            response["prediction_indices"] = [
+                int(idx) for idx, _ in handler.prediction_points
+            ]
+
+        if handler.prediction_errors is not None:
             response["prediction_errors"] = handler.prediction_errors
-            response["mean_error"] = float(np.mean(handler.prediction_errors))
+
         return response
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/evaluate_predictions")
-def evaluate_predictions(
-    data: PredictionErrorRequest,
+@router.get("/get_mean_error")
+def get_mean_error(
+    i_operation_plan: int,
     _: dict = Depends(require_roles(1, 2))
 ):
-    handler = positioning_handlers.get(data.i_operation_plan)
+    handler = positioning_handlers.get(i_operation_plan)
     if not handler:
         raise HTTPException(status_code=404, detail="Handler not initialized")
 
-    if not handler.predicted_world_coords:
-        raise HTTPException(status_code=400, detail="Need 10 points first to generate predictions")
+    if not handler.prediction_points:
+        raise HTTPException(status_code=400, detail="Prediction points not generated")
 
-    actual_coords = [[pt.x, pt.y, pt.z] for pt in data.actual_coords]
-    errors = handler.get_prediction_error(actual_coords)
-    return {"errors": errors, "mean_error": float(np.mean(errors))}
+    handler.check_and_compute_prediction_errors()
+
+    if handler.prediction_errors is None:
+        raise HTTPException(status_code=400, detail="Not all prediction points are registered")
+
+    return {
+        "prediction_indices": [int(idx) for idx, _ in handler.prediction_points],
+        "prediction_errors": handler.prediction_errors,
+        "mean_error": float(np.mean(handler.prediction_errors))
+    }
 
 
 @router.get("/get_view")
@@ -229,3 +243,4 @@ def remove_registered_points(
         "status": "deleted",
         "deleted_count": deleted
     }
+

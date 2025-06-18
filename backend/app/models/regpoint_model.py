@@ -19,3 +19,4 @@ class RegistrationPoint(Base):
     __table_args__ = (
         UniqueConstraint("i_operation_plan", "point_index", name="uq_registration_point"),
     )
+

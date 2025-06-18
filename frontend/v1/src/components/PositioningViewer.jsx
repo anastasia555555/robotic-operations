@@ -34,6 +34,7 @@ export default function PositioningViewer({ i_operation_plan, view_name, refresh
               errorMessage += ` - ${errorBody.detail}`;
             }
           } catch {
+            // ignore JSON parse error
           }
           throw new Error(errorMessage);
         }
@@ -74,3 +75,4 @@ export default function PositioningViewer({ i_operation_plan, view_name, refresh
     </div>
   );
 }
+
